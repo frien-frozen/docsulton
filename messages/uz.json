@@ -1,0 +1,232 @@
+{
+    "Navigation": {
+        "home": "Bosh sahifa",
+        "about": "Men haqimda",
+        "services": "Xizmatlar",
+        "blog": "Blog",
+        "certificates": "Sertifikatlar",
+        "contact": "Aloqa",
+        "dashboard": "Kabinet",
+        "login": "Kirish"
+    },
+    "Hero": {
+        "title": "Dr. Sultonbek Norkuziev",
+        "subtitle": "UROLOG | ANDROLOG | ENDOUROLOG",
+        "description": "Barcha turdagi urologik kassaliklar buyicha maslahatlar beramiz",
+        "bookConsultation": "Konsultatsiyaga yozilish",
+        "learnMore": "Batafsil",
+        "Services": {
+            "title": "Xizmatlarimiz",
+            "subtitle": "Zamonaviy tibbiy xizmatlar va professional maslahatlar",
+            "consultation": {
+                "title": "Online Konsultatsiya",
+                "desc": "Video aloqa orqali professional maslahat. Uyingizdan chiqmasdan shifokor bilan gaplashing.",
+                "price": "150,000 UZS"
+            },
+            "checkup": {
+                "title": "Batafsil Ko'rik",
+                "desc": "1 soatlik to'liq ko'rik va batafsil maslahat. Barcha savollaringizga javob.",
+                "price": "250,000 UZS"
+            },
+            "family": {
+                "title": "Oilaviy Maslahat",
+                "desc": "Butun oila uchun kompleks maslahat va ko'rikdan o'tish xizmati.",
+                "button": "Aloqaga chiqing"
+            }
+        },
+        "Trust": {
+            "certified": "Sertifikatlangan",
+            "certifiedDesc": "Xalqaro standartlar",
+            "trusted": "Ishonchli",
+            "trustedDesc": "Maxfiylik kafolati",
+            "support": "24/7",
+            "supportDesc": "Qulaylik",
+            "languages": "3 Til",
+            "languagesDesc": "UZ, RU, EN"
+        },
+        "CTA": {
+            "title": "Hoziroq konsultatsiyaga yoziling",
+            "desc": "Professional tibbiy yordam faqat bir bosish narida. Sog'ligingiz bizning ustuvor vazifamiz.",
+            "button": "Konsultatsiyaga yozilish"
+        },
+        "Doctor": {
+            "badgeTitle": "Sertifikatlangan",
+            "badgeSubtitle": "Mutaxassis"
+        },
+        "Stats": {
+            "years": "Yillik tajriba",
+            "patients": "Mamnun bemorlar",
+            "success": "Muvaffaqiyat"
+        }
+    },
+    "Booking": {
+        "title": "Konsultatsiyaga yozilish",
+        "selectService": "Xizmat turini tanlang",
+        "selectServiceSubtitle": "Sizga mos keladigan konsultatsiya turini tanlang",
+        "duration": "daqiqa",
+        "price": "UZS",
+        "selectTime": "Vaqtni tanlang",
+        "selectTimeSubtitle": "Sizga qulay sana va vaqtni belgilang",
+        "selectDate": "Sanani tanlang",
+        "availableTimes": "Mavjud vaqtlar",
+        "booked": "Band",
+        "available": "Bo'sh",
+        "yourDetails": "Ma'lumotlaringiz",
+        "enterDetailsSubtitle": "Siz bilan bog'lanishimiz uchun ma'lumotlarni kiriting",
+        "nameLabel": "Ismingiz *",
+        "namePlaceholder": "To'liq ismingizni kiriting",
+        "phoneLabel": "Telefon raqam *",
+        "telegramLabel": "Telegram Username",
+        "notesLabel": "Qo'shimcha izoh",
+        "notesPlaceholder": "Kasallik haqida qisqacha ma'lumot...",
+        "payment": "To'lov",
+        "paymentSubtitle": "To'lovni amalga oshiring va chekni yuklang",
+        "paymentAmount": "To'lov summasi:",
+        "cardNumber": "Karta raqami:",
+        "cardHolder": "Sultonbek Norkuziev nomiga",
+        "confirm": "Tasdiqlash",
+        "uploadScreenshot": "To'lov chekini yuklang",
+        "uploadFormat": "JPG, PNG formatida (maks 5MB)",
+        "submit": "Yuborish",
+        "successTitle": "Muvaffaqiyatli!",
+        "successMessage": "Sizning so'rovingiz qabul qilindi. Tez orada operatorlarimiz siz bilan bog'lanishadi.",
+        "serviceLabel": "Xizmat:",
+        "dateLabel": "Sana:",
+        "timeLabel": "Vaqt:",
+        "statusLabel": "Holat:",
+        "pending": "Kutilmoqda",
+        "returnHome": "Bosh sahifaga qaytish"
+    },
+    "Common": {
+        "loading": "Yuklanmoqda...",
+        "error": "Xatolik yuz berdi",
+        "success": "Muvaffaqiyatli",
+        "back": "Orqaga",
+        "next": "Keyingi"
+    },
+    "Projects": {
+        "title": "Loyihalar Portfoliosi",
+        "subtitle": "Tibbiyot va texnologiya birlashgan innovatsion yechimlar va raqamli mahsulotlar",
+        "emptyTitle": "Hozircha loyihalar yo'q",
+        "emptySubtitle": "Tez orada yangi loyihalar qo'shiladi",
+        "viewSite": "Saytga o'tish",
+        "techStack": "Texnologiyalar"
+    },
+    "Certificates": {
+        "title": "Sertifikatlar va Yutuqlar",
+        "subtitle": "Professional faoliyat davomida erishilgan yutuqlar va malaka oshirish sertifikatlari",
+        "empty": "Hozircha sertifikatlar yo'q",
+        "view": "Ko'rish"
+    },
+    "Blog": {
+        "title": "Blog & Yangiliklar",
+        "subtitle": "Salomatlik, urologiya va zamonaviy tibbiyot haqida foydali maqolalar",
+        "searchPlaceholder": "Maqolalarni izlash...",
+        "emptyTitle": "Hech narsa topilmadi",
+        "emptySubtitle": "Boshqa so'z bilan izlab ko'ring",
+        "readMore": "O'qishni davom ettirish",
+        "readTime": "daqiqa"
+    },
+    "Services": {
+        "title": "Xizmatlar va Narxlar",
+        "subtitle": "Siz uchun qulay va sifatli tibbiy xizmatlarni taklif etamiz",
+        "bookNow": "Yozilish",
+        "Items": {
+            "consultation": {
+                "title": "Online Konsultatsiya",
+                "description": "Video aloqa orqali professional maslahat. Uyingizdan chiqmasdan shifokor bilan gaplashing.",
+                "price": "150,000 UZS",
+                "features": {
+                    "0": "Video aloqa (Zoom/Telegram)",
+                    "1": "Tahlillar tahlili",
+                    "2": "Davolash rejasi",
+                    "3": "Qayta aloqa"
+                }
+            },
+            "checkup": {
+                "title": "Batafsil Ko'rik",
+                "description": "1 soatlik to'liq ko'rik va batafsil maslahat. Barcha savollaringizga javob.",
+                "price": "250,000 UZS",
+                "features": {
+                    "0": "To'liq fizik tekshiruv",
+                    "1": "Ultratovush tekshiruvi",
+                    "2": "Tezkor tahlillar",
+                    "3": "Batafsil tavsiyalar"
+                }
+            },
+            "family": {
+                "title": "Oilaviy Maslahat",
+                "description": "Butun oila uchun kompleks maslahat va ko'rikdan o'tish xizmati.",
+                "price": "Kelishilgan holda",
+                "features": {
+                    "0": "Er va xotin uchun",
+                    "1": "Reproduktiv salomatlik",
+                    "2": "Oilaviy rejalashtirish",
+                    "3": "Uzoq muddatli kuzatuv"
+                }
+            }
+        }
+    },
+    "Dashboard": {
+        "title": "Mening Kabinetim",
+        "subtitle": "Konsultatsiyalaringizni boshqaring",
+        "stats": {
+            "total": "Jami konsultatsiyalar",
+            "approved": "Tasdiqlangan",
+            "pending": "Kutilmoqda"
+        },
+        "upcoming": "Yaqinlashib kelayotgan konsultatsiyalar",
+        "empty": {
+            "title": "Konsultatsiyalar yo'q",
+            "desc": "Hozircha sizda rejalashtirilgan konsultatsiyalar yo'q",
+            "button": "Konsultatsiyaga yozilish"
+        },
+        "status": {
+            "APPROVED": "Tasdiqlangan",
+            "PENDING": "Kutilmoqda",
+            "REJECTED": "Bekor qilingan"
+        },
+        "payment": {
+            "VERIFIED": "To'langan",
+            "PENDING": "Kutilmoqda",
+            "REJECTED": "Rad etilgan"
+        },
+        "actions": {
+            "join": "Konsultatsiyaga kirish",
+            "copyLink": "Linkni nusxalash",
+            "copied": "Nusxalandi"
+        },
+        "pendingMessage": "Sizning so'rovingiz ko'rib chiqilmoqda. Tez orada javob beramiz."
+    },
+    "About": {
+        "title": "Zamonaviy urologiya va <span>erkaklar salomatligi</span>",
+        "role": "Dr. Sultonbek Norkuziev",
+        "bio": "Men Sultonbek Norkuziev, oliy toifali urolog-androlog shifokorman. Faoliyatim davomida minglab bemorlarga salomatligini tiklashda yordam berib kelmoqdaman. Mening maqsadim - zamonaviy tibbiyot yutuqlarini amaliyotda qo'llash orqali insonlar hayot sifatini yaxshilash.",
+        "bookAppointment": "Qabulga yozilish",
+        "readMore": "Batafsil",
+        "social": "Ijtimoiy tarmoqlarda kuzating",
+        "stats": {
+            "patients": "Bemorlar",
+            "experience": "Tajriba",
+            "operations": "Operatsiyalar",
+            "consultations": "Konsultatsiyalar"
+        },
+        "sections": {
+            "education": "Ta'lim va Malaka",
+            "directions": "Asosiy Yo'nalishlar"
+        },
+        "educationList": {
+            "0": "Toshkent Tibbiyot Akademiyasi (Bakalavr)",
+            "1": "Respublika Ixtisoslashtirilgan Urologiya Markazi (Ordinatura)",
+            "2": "Yevropa Urologlar Assotsiatsiyasi a'zosi",
+            "3": "Rossiya va Turkiya klinikalarida malaka oshirish"
+        },
+        "directionsList": {
+            "0": "Erkaklar bepushtligini davolash",
+            "1": "Prostata bezi kasalliklari",
+            "2": "Jinsiy zaiflik va erektil disfunksiya",
+            "3": "Buyrak tosh kasalliklari (Endourologiya)",
+            "4": "Laparoskopik operatsiyalar"
+        }
+    }
+}

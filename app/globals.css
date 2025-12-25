@@ -1,0 +1,369 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Theme Colors */
+    --background: 255 255 255;
+    --foreground: 30 41 59;
+
+    /* Primary - Soft Medical Blue */
+    --primary: 33 150 243;
+    --primary-light: 227 242 253;
+    --primary-dark: 25 118 210;
+
+    /* Secondary - Calming Green */
+    --secondary: 76 175 80;
+    --secondary-light: 232 245 233;
+    --secondary-dark: 56 142 60;
+
+    /* Accent - Warm Beige/Orange */
+    --accent: 255 152 0;
+    --accent-light: 255 243 224;
+  }
+
+  * {
+    border-color: rgb(226 232 240);
+  }
+
+  body {
+    background-color: white;
+    color: rgb(30 41 59);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    color: rgb(15 23 42);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30;
+  }
+
+  .btn-outline {
+    @apply border-2 border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50;
+  }
+
+  .btn-soft {
+    @apply bg-blue-50 text-blue-600 hover:bg-blue-100;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500 pb-1;
+  }
+
+  .gradient-soft {
+    @apply bg-gradient-to-br from-blue-50 via-white to-green-50;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-br from-blue-50/50 to-green-50/50;
+  }
+
+  /* Admin Buttons */
+  .btn-admin-primary {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40;
+  }
+}
+
+/* Glassmorphism Effects */
+.glass {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.glass-light {
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.glass-strong {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+}
+
+/* Floating Cards */
+.floating-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  transition: all 0.3s ease-out;
+  transform: translateY(0);
+}
+
+.floating-card:hover {
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+  transform: translateY(-8px);
+}
+
+.floating-card-subtle {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  transition: all 0.3s ease-out;
+}
+
+.floating-card-subtle:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  transform: translateY(-4px);
+}
+
+/* Card Hover Effects */
+.card-hover {
+  transition: all 0.3s ease-out;
+}
+
+.card-hover:hover {
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+  transform: scale(1.02);
+}
+
+/* Asymmetrical Cards */
+.card-asymmetric {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-asymmetric::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8rem;
+  height: 8rem;
+  background: linear-gradient(to bottom right, rgb(219 234 254), transparent);
+  border-radius: 9999px;
+  filter: blur(2rem);
+  opacity: 0.5;
+}
+
+/* Custom Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+@keyframes gradient-xy {
+
+  0%,
+  100% {
+    background-size: 400% 400%;
+    background-position: 0% 0%;
+  }
+
+  25% {
+    background-size: 400% 400%;
+    background-position: 100% 0%;
+  }
+
+  50% {
+    background-size: 400% 400%;
+    background-position: 100% 100%;
+  }
+
+  75% {
+    background-size: 400% 400%;
+    background-position: 0% 100%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient-xy 15s ease infinite;
+  background-size: 400% 400%;
+}
+
+/* Calendar Styling (react-day-picker) */
+.rdp {
+  --rdp-cell-size: 44px;
+  --rdp-accent-color: rgb(33 150 243);
+  --rdp-background-color: rgb(227 242 253);
+  margin: 0;
+}
+
+.rdp-months {
+  justify-content: center;
+}
+
+.rdp-month {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.rdp-caption {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0 1rem 0;
+}
+
+.rdp-caption_label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: rgb(30 41 59);
+}
+
+.rdp-head_cell {
+  color: rgb(100 116 139);
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.rdp-cell {
+  padding: 0.25rem;
+}
+
+.rdp-day {
+  border-radius: 0.75rem;
+  font-weight: 500;
+  color: rgb(30 41 59);
+  transition: all 0.2s ease;
+}
+
+.rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+  background-color: rgb(219 234 254);
+  color: rgb(30 64 175);
+}
+
+.rdp-day_selected {
+  background-color: rgb(33 150 243);
+  color: white;
+  font-weight: 600;
+}
+
+.rdp-day_selected:hover {
+  background-color: rgb(25 118 210);
+}
+
+.rdp-day_today:not(.rdp-day_selected) {
+  background-color: rgb(254 249 195);
+  color: rgb(161 98 7);
+  font-weight: 600;
+}
+
+.rdp-day_disabled {
+  color: rgb(203 213 225);
+  cursor: not-allowed;
+}
+
+.rdp-nav_button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.rdp-nav_button:hover:not([disabled]) {
+  background-color: rgb(219 234 254);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgb(241 245 249);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(148 163 184);
+}
+
+/* Selection */
+::selection {
+  background-color: rgb(191 219 254);
+  color: rgb(30 58 138);
+}
+
+/* Focus Visible */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgb(191 219 254), 0 0 0 6px white;
+}

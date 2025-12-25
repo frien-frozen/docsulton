@@ -1,0 +1,339 @@
+'use client'
+
+import { useTranslations, useLocale } from 'next-intl'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { Calendar, Clock, Video, Copy, CheckCircle, AlertCircle, ExternalLink, Heart, Plus } from 'lucide-react'
+import { format } from 'date-fns'
+import { auth } from '@/lib/firebase'
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth'
+import { Button } from '@/components/ui/Button'
+
+interface Booking {
+    id: string
+    service: { name: string; price: number }
+    slot: { startTime: string; endTime: string }
+    status: string
+    paymentStatus: string
+    meetingLink?: string
+}
+
+export default function DashboardPage({ params }: { params: { locale: string } }) {
+    const t = useTranslations('Dashboard')
+    const locale = useLocale()
+    const router = useRouter()
+    const [user, setUser] = useState<FirebaseUser | null>(null)
+    const [bookings, setBookings] = useState<Booking[]>([])
+    const [loading, setLoading] = useState(true)
+    const [copiedId, setCopiedId] = useState<string | null>(null)
+    const [timeUntil, setTimeUntil] = useState<{ [key: string]: string }>({})
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser)
+            if (!currentUser) {
+                router.push(`/${locale}/booking`)
+            }
+        })
+        return () => unsubscribe()
+    }, [router, locale])
+
+    useEffect(() => {
+        if (user) {
+            fetchBookings()
+        }
+    }, [user, locale])
+
+    const fetchBookings = async () => {
+        if (!user?.email) return
+
+        try {
+            const res = await fetch(`/api/user/consultations?userEmail=${encodeURIComponent(user.email)}`)
+            if (res.ok) {
+                const data = await res.json()
+                // Transform data to match interface and localize
+                const formattedBookings = data.map((b: any) => ({
+                    ...b,
+                    service: {
+                        ...b.service,
+                        name: getLocalizedContent(b.service.name)
+                    }
+                }))
+                setBookings(formattedBookings)
+            }
+        } catch (error) {
+            console.error('Error fetching bookings:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Update countdown timers every minute
+    useEffect(() => {
+        const updateTimers = () => {
+            const newTimeUntil: { [key: string]: string } = {}
+            bookings.forEach(booking => {
+                const now = new Date()
+                const start = new Date(booking.slot.startTime)
+                const diff = start.getTime() - now.getTime()
+
+                if (diff < 0) {
+                    newTimeUntil[booking.id] = 'Started'
+                } else {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+                    if (days > 0) newTimeUntil[booking.id] = `${days}d ${hours}h`
+                    else if (hours > 0) newTimeUntil[booking.id] = `${hours}h ${minutes}m`
+                    else newTimeUntil[booking.id] = `${minutes}m`
+                }
+            })
+            setTimeUntil(newTimeUntil)
+        }
+
+        updateTimers()
+        const interval = setInterval(updateTimers, 60000) // Update every minute
+        return () => clearInterval(interval)
+    }, [bookings])
+
+    const getLocalizedContent = (jsonString: string) => {
+        try {
+            const content = JSON.parse(jsonString)
+            return content[locale] || content['uz'] || ''
+        } catch (e) {
+            return jsonString
+        }
+    }
+
+    const copyMeetingLink = (link: string, id: string) => {
+        navigator.clipboard.writeText(link)
+        setCopiedId(id)
+        setTimeout(() => setCopiedId(null), 2000)
+    }
+
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case 'APPROVED':
+                return <span className="badge badge-success">{t('status.APPROVED')}</span>
+            case 'PENDING':
+                return <span className="badge badge-warning">{t('status.PENDING')}</span>
+            case 'REJECTED':
+                return <span className="badge badge-error">{t('status.REJECTED')}</span>
+            default:
+                return <span className="badge badge-neutral">{status}</span>
+        }
+    }
+
+    const getPaymentBadge = (status: string) => {
+        switch (status) {
+            case 'VERIFIED':
+                return <span className="badge badge-success">{t('payment.VERIFIED')}</span>
+            case 'PENDING':
+                return <span className="badge badge-warning">{t('payment.PENDING')}</span>
+            case 'REJECTED':
+                return <span className="badge badge-error">{t('payment.REJECTED')}</span>
+            default:
+                return <span className="badge badge-neutral">{status}</span>
+        }
+    }
+
+    return (
+        <div className="min-h-screen gradient-soft pt-24 pb-12 px-4">
+            <div className="max-w-6xl mx-auto">
+                {/* Header */}
+                <div className="mb-12">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-2xl flex items-center justify-center shadow-lg">
+                            <Heart className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-bold gradient-text">{t('title')}</h1>
+                            <p className="text-gray-600">{t('subtitle')}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Stats Cards */}
+                <div className="grid md:grid-cols-3 gap-6 mb-12">
+                    <div className="glass-light p-6 rounded-2xl">
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <Calendar className="w-7 h-7 text-blue-600" />
+                            </div>
+                            <div>
+                                <div className="text-3xl font-bold text-gray-900">{bookings.length}</div>
+                                <div className="text-sm text-gray-600">{t('stats.total')}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass-light p-6 rounded-2xl">
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                                <CheckCircle className="w-7 h-7 text-green-600" />
+                            </div>
+                            <div>
+                                <div className="text-3xl font-bold text-gray-900">
+                                    {bookings.filter(b => b.status === 'APPROVED').length}
+                                </div>
+                                <div className="text-sm text-gray-600">{t('stats.approved')}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass-light p-6 rounded-2xl">
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
+                                <AlertCircle className="w-7 h-7 text-orange-600" />
+                            </div>
+                            <div>
+                                <div className="text-3xl font-bold text-gray-900">
+                                    {bookings.filter(b => b.status === 'PENDING').length}
+                                </div>
+                                <div className="text-sm text-gray-600">{t('stats.pending')}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* New Booking Button */}
+                <div className="mb-8 flex justify-end">
+                    <Button
+                        onClick={() => router.push(`/${locale}/booking`)}
+                        variant="primary"
+                        className="flex items-center gap-2"
+                    >
+                        <Plus className="w-5 h-5" />
+                        New Booking
+                    </Button>
+                </div>
+
+                {/* Upcoming Consultations */}
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold mb-6 text-gray-900">{t('upcoming')}</h2>
+
+                    <div className="grid gap-6">
+                        {bookings.map((booking, index) => (
+                            <motion.div
+                                key={booking.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="floating-card-subtle p-6 relative overflow-hidden"
+                            >
+                                {/* Decorative gradient */}
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-transparent rounded-full blur-2xl opacity-50"></div>
+
+                                <div className="relative z-10">
+                                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                                        {/* Left Section */}
+                                        <div className="flex-1">
+                                            <div className="flex items-start gap-4 mb-4">
+                                                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                                                    <Video className="w-7 h-7 text-white" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xl font-bold text-gray-900 mb-2">{booking.service.name}</h3>
+                                                    <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Calendar className="w-4 h-4" />
+                                                            {format(new Date(booking.slot.startTime), 'dd MMMM yyyy')}
+                                                        </span>
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Clock className="w-4 h-4" />
+                                                            {format(new Date(booking.slot.startTime), 'HH:mm')}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Countdown Timer */}
+                                            {booking.status === 'APPROVED' && timeUntil[booking.id] && (
+                                                <div className="mt-4 bg-blue-50 p-4 rounded-xl">
+                                                    <p className="text-sm text-gray-600 mb-1">Time until consultation</p>
+                                                    <p className="text-2xl font-bold text-blue-600">
+                                                        {timeUntil[booking.id]}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex flex-wrap gap-2 mt-4">
+                                                {getStatusBadge(booking.status)}
+                                                {getPaymentBadge(booking.paymentStatus)}
+                                            </div>
+                                        </div>
+
+                                        {/* Right Section */}
+                                        <div className="flex flex-col gap-3 md:items-end">
+                                            <div className="text-right">
+                                                <div className="text-2xl font-bold text-blue-600">
+                                                    {booking.service.price.toLocaleString()} UZS
+                                                </div>
+                                            </div>
+
+                                            {booking.meetingLink && booking.status === 'APPROVED' && (
+                                                <div className="flex flex-col gap-2">
+                                                    <a
+                                                        href={booking.meetingLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="btn btn-primary flex items-center gap-2"
+                                                    >
+                                                        <Video className="w-4 h-4" />
+                                                        {t('actions.join')}
+                                                        <ExternalLink className="w-4 h-4" />
+                                                    </a>
+
+                                                    <button
+                                                        onClick={() => copyMeetingLink(booking.meetingLink!, booking.id)}
+                                                        className="btn btn-outline text-sm"
+                                                    >
+                                                        {copiedId === booking.id ? (
+                                                            <>
+                                                                <CheckCircle className="w-4 h-4" />
+                                                                {t('actions.copied')}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Copy className="w-4 h-4" />
+                                                                {t('actions.copyLink')}
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            {booking.status === 'PENDING' && (
+                                                <div className="glass-light p-4 rounded-xl text-sm text-gray-600 max-w-xs">
+                                                    <AlertCircle className="w-5 h-5 text-orange-500 mb-2" />
+                                                    <p>{t('pendingMessage')}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Empty State */}
+                {bookings.length === 0 && (
+                    <div className="glass-light p-12 rounded-3xl text-center">
+                        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Calendar className="w-12 h-12 text-gray-400" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('empty.title')}</h3>
+                        <p className="text-gray-600 mb-6">{t('empty.desc')}</p>
+                        <a href="/booking" className="btn btn-primary inline-flex">
+                            <Calendar className="w-5 h-5" />
+                            {t('empty.button')}
+                        </a>
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}

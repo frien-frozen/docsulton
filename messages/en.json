@@ -1,0 +1,232 @@
+{
+    "Navigation": {
+        "home": "Home",
+        "about": "About",
+        "services": "Services",
+        "blog": "Blog",
+        "certificates": "Certificates",
+        "contact": "Contact",
+        "dashboard": "Dashboard",
+        "login": "Login"
+    },
+    "Hero": {
+        "title": "Dr. Sultonbek Norkuziev",
+        "subtitle": "UROLOGIST | ANDROLOGIST | ENDOUROLOGIST",
+        "description": "Consultations for all types of urological diseases",
+        "bookConsultation": "Book Consultation",
+        "learnMore": "Learn More",
+        "Services": {
+            "title": "Our Services",
+            "subtitle": "Modern medical services and professional advice",
+            "consultation": {
+                "title": "Online Consultation",
+                "desc": "Professional advice via video call. Talk to a doctor without leaving your home.",
+                "price": "150,000 UZS"
+            },
+            "checkup": {
+                "title": "Detailed Checkup",
+                "desc": "1 hour full examination and detailed consultation. Answers to all your questions.",
+                "price": "250,000 UZS"
+            },
+            "family": {
+                "title": "Family Consultation",
+                "desc": "Comprehensive advice and checkup service for the whole family.",
+                "button": "Get in Touch"
+            }
+        },
+        "Trust": {
+            "certified": "Certified",
+            "certifiedDesc": "International Standards",
+            "trusted": "Trusted",
+            "trustedDesc": "Privacy Guaranteed",
+            "support": "24/7",
+            "supportDesc": "Convenience",
+            "languages": "3 Languages",
+            "languagesDesc": "UZ, RU, EN"
+        },
+        "CTA": {
+            "title": "Book a consultation now",
+            "desc": "Professional medical help is just a click away. Your health is our priority.",
+            "button": "Book Consultation"
+        },
+        "Doctor": {
+            "badgeTitle": "Certified",
+            "badgeSubtitle": "Specialist"
+        },
+        "Stats": {
+            "years": "Years Experience",
+            "patients": "Happy Patients",
+            "success": "Success Rate"
+        }
+    },
+    "Booking": {
+        "title": "Book Consultation",
+        "selectService": "Select Service",
+        "selectServiceSubtitle": "Choose the consultation type that suits you",
+        "duration": "min",
+        "price": "UZS",
+        "selectTime": "Select Time",
+        "selectTimeSubtitle": "Select a convenient date and time",
+        "selectDate": "Select Date",
+        "availableTimes": "Available Times",
+        "booked": "Booked",
+        "available": "Available",
+        "yourDetails": "Your Details",
+        "enterDetailsSubtitle": "Enter your details so we can contact you",
+        "nameLabel": "Name *",
+        "namePlaceholder": "Enter your full name",
+        "phoneLabel": "Phone Number *",
+        "telegramLabel": "Telegram Username",
+        "notesLabel": "Additional Notes",
+        "notesPlaceholder": "Brief information about the condition...",
+        "payment": "Payment",
+        "paymentSubtitle": "Make the payment and upload the receipt",
+        "paymentAmount": "Payment Amount:",
+        "cardNumber": "Card Number:",
+        "cardHolder": "Name: Sultonbek Norkuziev",
+        "confirm": "Confirm",
+        "uploadScreenshot": "Upload Payment Receipt",
+        "uploadFormat": "JPG, PNG format (max 5MB)",
+        "submit": "Submit",
+        "successTitle": "Success!",
+        "successMessage": "Your request has been received. Our operators will contact you soon.",
+        "serviceLabel": "Service:",
+        "dateLabel": "Date:",
+        "timeLabel": "Time:",
+        "statusLabel": "Status:",
+        "pending": "Pending",
+        "returnHome": "Return to Home"
+    },
+    "Common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "success": "Success",
+        "back": "Back",
+        "next": "Next"
+    },
+    "Projects": {
+        "title": "Projects Portfolio",
+        "subtitle": "Innovative solutions combining medicine and technology",
+        "emptyTitle": "No projects yet",
+        "emptySubtitle": "New projects coming soon",
+        "viewSite": "Visit Website",
+        "techStack": "Technologies"
+    },
+    "Certificates": {
+        "title": "Certificates & Achievements",
+        "subtitle": "Achievements and qualifications gained during professional activity",
+        "empty": "No certificates yet",
+        "view": "View"
+    },
+    "Blog": {
+        "title": "Blog & News",
+        "subtitle": "Useful articles about health, urology and modern medicine",
+        "searchPlaceholder": "Search articles...",
+        "emptyTitle": "Nothing found",
+        "emptySubtitle": "Try searching with different keywords",
+        "readMore": "Read more",
+        "readTime": "min read"
+    },
+    "Services": {
+        "title": "Services & Prices",
+        "subtitle": "We offer convenient and quality medical services for you",
+        "bookNow": "Book Now",
+        "Items": {
+            "consultation": {
+                "title": "Online Consultation",
+                "description": "Professional advice via video call. Talk to a doctor without leaving your home.",
+                "price": "150,000 UZS",
+                "features": {
+                    "0": "Video call (Zoom/Telegram)",
+                    "1": "Analysis review",
+                    "2": "Treatment plan",
+                    "3": "Feedback"
+                }
+            },
+            "checkup": {
+                "title": "Detailed Checkup",
+                "description": "1 hour full examination and detailed consultation. Answers to all your questions.",
+                "price": "250,000 UZS",
+                "features": {
+                    "0": "Full physical examination",
+                    "1": "Ultrasound examination",
+                    "2": "Rapid tests",
+                    "3": "Detailed recommendations"
+                }
+            },
+            "family": {
+                "title": "Family Consultation",
+                "description": "Comprehensive advice and checkup service for the whole family.",
+                "price": "Negotiable",
+                "features": {
+                    "0": "For husband and wife",
+                    "1": "Reproductive health",
+                    "2": "Family planning",
+                    "3": "Long-term monitoring"
+                }
+            }
+        }
+    },
+    "Dashboard": {
+        "title": "My Cabinet",
+        "subtitle": "Manage your consultations",
+        "stats": {
+            "total": "Total Consultations",
+            "approved": "Approved",
+            "pending": "Pending"
+        },
+        "upcoming": "Upcoming Consultations",
+        "empty": {
+            "title": "No Consultations",
+            "desc": "You have no scheduled consultations yet",
+            "button": "Book Consultation"
+        },
+        "status": {
+            "APPROVED": "Approved",
+            "PENDING": "Pending",
+            "REJECTED": "Cancelled"
+        },
+        "payment": {
+            "VERIFIED": "Paid",
+            "PENDING": "Pending",
+            "REJECTED": "Rejected"
+        },
+        "actions": {
+            "join": "Join Consultation",
+            "copyLink": "Copy Link",
+            "copied": "Copied"
+        },
+        "pendingMessage": "Your request is being reviewed. We will answer soon."
+    },
+    "About": {
+        "title": "Modern Urology and <span>Men's Health</span>",
+        "role": "Dr. Sultonbek Norkuziev",
+        "bio": "I am Sultonbek Norkuziev, a highly qualified urologist-andrologist. Throughout my career, I have been helping thousands of patients restore their health. My goal is to improve people's quality of life by applying achievements of modern medicine in practice.",
+        "bookAppointment": "Book Appointment",
+        "readMore": "Read More",
+        "social": "Follow on social media",
+        "stats": {
+            "patients": "Patients",
+            "experience": "Experience",
+            "operations": "Operations",
+            "consultations": "Consultations"
+        },
+        "sections": {
+            "education": "Education & Qualifications",
+            "directions": "Main Directions"
+        },
+        "educationList": {
+            "0": "Tashkent Medical Academy (Bachelor)",
+            "1": "Republican Specialized Urology Center (Residency)",
+            "2": "Member of European Association of Urology",
+            "3": "Advanced training in clinics of Russia and Turkey"
+        },
+        "directionsList": {
+            "0": "Treatment of male infertility",
+            "1": "Prostate diseases",
+            "2": "Sexual weakness and erectile dysfunction",
+            "3": "Kidney stone diseases (Endourology)",
+            "4": "Laparoscopic operations"
+        }
+    }
+}

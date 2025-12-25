@@ -1,0 +1,227 @@
+import { PrismaClient } from '@prisma/client'
+import * as bcrypt from 'bcryptjs'
+
+const prisma = new PrismaClient()
+
+async function main() {
+    // Create admin user
+    const hashedPassword = await bcrypt.hash('password1234', 10)
+
+    const admin = await prisma.user.upsert({
+        where: { username: 'admin' },
+        update: {
+            role: 'ADMIN'
+        },
+        create: {
+            username: 'admin',
+            password: hashedPassword,
+            email: 'admin@example.com',
+            role: 'ADMIN'
+        }
+    })
+
+    console.log('✅ Admin user created:', admin.username)
+
+    // Create services
+    const consultation30 = await prisma.service.create({
+        data: {
+            name: JSON.stringify({
+                uz: 'Online Konsultatsiya (30 daqiqa)',
+                ru: 'Онлайн Консультация (30 минут)',
+                en: 'Online Consultation (30 mins)'
+            }),
+            description: JSON.stringify({
+                uz: 'Urolog bilan video aloqa orqali maslahat',
+                ru: 'Видеоконсультация с урологом',
+                en: 'Video consultation with urologist'
+            }),
+            duration: 30,
+            price: 150000,
+            currency: 'UZS'
+        }
+    })
+
+    const consultation60 = await prisma.service.create({
+        data: {
+            name: JSON.stringify({
+                uz: 'Online Konsultatsiya (1 soat)',
+                ru: 'Онлайн Консультация (1 час)',
+                en: 'Online Consultation (1 hour)'
+            }),
+            description: JSON.stringify({
+                uz: 'Batafsil ko\'rik va maslahat',
+                ru: 'Подробный осмотр и консультация',
+                en: 'Detailed examination and consultation'
+            }),
+            duration: 60,
+            price: 250000,
+            currency: 'UZS'
+        }
+    })
+
+    console.log('✅ Services created')
+
+    // Create time slots for the next 7 days
+    const today = new Date()
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(today)
+        date.setDate(today.getDate() + i)
+
+        // Create slots from 10:00 to 16:00
+        for (let hour = 10; hour < 16; hour++) {
+            const startTime = new Date(date)
+            startTime.setHours(hour, 0, 0, 0)
+
+            const endTime = new Date(startTime)
+            endTime.setMinutes(endTime.getMinutes() + 30)
+
+            await prisma.timeSlot.create({
+                data: {
+                    startTime,
+                    endTime,
+                    isBooked: false
+                }
+            })
+        }
+    }
+
+    console.log('✅ Time slots created')
+
+    // Create sample project
+    await prisma.project.create({
+        data: {
+            title: JSON.stringify({ uz: 'Namuna loyiha', ru: 'Пример проекта', en: 'Sample Project' }),
+            description: JSON.stringify({ uz: 'Bu namuna loyiha', ru: 'Это пример проекта', en: 'This is a sample project' }),
+            content: JSON.stringify({ uz: 'Loyiha haqida', ru: 'О проекте', en: 'About project' }),
+            images: JSON.stringify([]),
+            techStack: JSON.stringify(['Next.js', 'TypeScript']),
+            order: 1,
+            isVisible: true,
+            featured: true
+        }
+    })
+
+    console.log('✅ Sample project created')
+
+    // Create sample blog posts
+    const posts = [
+        {
+            title: { uz: 'Erkaklar salomatligi sirlari', ru: 'Секреты мужского здоровья', en: 'Secrets of Men\'s Health' },
+            slug: 'mens-health-secrets',
+            excerpt: {
+                uz: 'Erkaklar salomatligini saqlash bo\'yicha muhim maslahatlar va tavsiyalar.',
+                ru: 'Важные советы и рекомендации по сохранению мужского здоровья.',
+                en: 'Important tips and recommendations for maintaining men\'s health.'
+            },
+            content: {
+                uz: '## Erkaklar salomatligi\n\nErkaklar salomatligi har bir yoshda muhim ahamiyatga ega. To\'g\'ri ovqatlanish, muntazam jismoniy mashqlar va stressni boshqarish asosiy omillardir.\n\n### Asosiy tavsiyalar:\n1. Muntazam tekshiruvdan o\'ting\n2. Sport bilan shug\'ullaning\n3. Zararli odatlardan voz keching',
+                ru: '## Мужское здоровье\n\nЗдоровье мужчин важно в любом возрасте. Правильное питание, регулярные физические упражнения и управление стрессом являются ключевыми факторами.\n\n### Основные рекомендации:\n1. Проходите регулярные осмотры\n2. Занимайтесь спортом\n3. Откажитесь от вредных привычек',
+                en: '## Men\'s Health\n\nMen\'s health is important at every age. Proper nutrition, regular exercise, and stress management are key factors.\n\n### Key Recommendations:\n1. Get regular check-ups\n2. Exercise regularly\n3. Quit bad habits'
+            },
+            coverImage: 'https://images.unsplash.com/photo-1571019611246-509c333dd80d?q=80&w=2940&auto=format&fit=crop',
+            isPublished: true,
+            tags: ['health', 'men', 'tips']
+        },
+        {
+            title: { uz: 'Prostatit: Belgilari va davolash', ru: 'Простатит: Симптомы и лечение', en: 'Prostatitis: Symptoms and Treatment' },
+            slug: 'prostatitis-symptoms',
+            excerpt: {
+                uz: 'Prostatit kasalligining belgilari va zamonaviy davolash usullari haqida.',
+                ru: 'О симптомах простатита и современных методах лечения.',
+                en: 'About symptoms of prostatitis and modern treatment methods.'
+            },
+            content: {
+                uz: '## Prostatit nima?\n\nProstatit - bu prostata bezining yallig\'lanishi. Bu kasallik turli yoshdagi erkaklarda uchrashi mumkin.\n\n### Belgilari:\n- Og\'riq\n- Peshob chiqarishda muammolar\n- Harorat ko\'tarilishi',
+                ru: '## Что такое простатит?\n\nПростатит - это воспаление предстательной железы. Это заболевание может встречаться у мужчин разного возраста.\n\n### Симптомы:\n- Боль\n- Проблемы с мочеиспусканием\n- Повышение температуры',
+                en: '## What is Prostatitis?\n\nProstatitis is inflammation of the prostate gland. This disease can occur in men of different ages.\n\n### Symptoms:\n- Pain\n- Problems with urination\n- Fever'
+            },
+            coverImage: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2960&auto=format&fit=crop',
+            isPublished: true,
+            tags: ['disease', 'treatment', 'urology']
+        },
+        {
+            title: { uz: 'Sog\'lom turmush tarzi', ru: 'Здоровый образ жизни', en: 'Healthy Lifestyle' },
+            slug: 'healthy-lifestyle',
+            excerpt: {
+                uz: 'Kundalik hayotda sog\'lom turmush tarzini shakllantirish.',
+                ru: 'Формирование здорового образа жизни в повседневности.',
+                en: 'Forming a healthy lifestyle in daily life.'
+            },
+            content: {
+                uz: '## Sog\'lom turmush tarzi\n\nSog\'lom bo\'lish uchun kun tartibiga rioya qilish muhim.\n\n> "Sog\'liq - bu eng katta boylik"\n\nHar kuni kamida 30 daqiqa piyoda yuring.',
+                ru: '## Здоровый образ жизни\n\nДля здоровья важно соблюдать режим дня.\n\n> "Здоровье - это самое большое богатство"\n\nХодите пешком минимум 30 минут каждый день.',
+                en: '## Healthy Lifestyle\n\nIt is important to follow a daily routine to be healthy.\n\n> "Health is the greatest wealth"\n\nWalk for at least 30 minutes every day.'
+            },
+            coverImage: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=2940&auto=format&fit=crop',
+            isPublished: true,
+            tags: ['lifestyle', 'health', 'daily']
+        }
+    ]
+
+    for (const post of posts) {
+        await prisma.post.upsert({
+            where: { slug: post.slug },
+            update: {},
+            create: {
+                title: JSON.stringify(post.title),
+                slug: post.slug,
+                excerpt: JSON.stringify(post.excerpt),
+                content: JSON.stringify(post.content),
+                coverImage: post.coverImage,
+                isPublished: post.isPublished,
+                tags: JSON.stringify(post.tags)
+            }
+        })
+    }
+
+    console.log('✅ Sample blog posts created')
+
+    // Create sample certificates
+    const certificates = [
+        {
+            title: { uz: 'Urologiya buyicha malaka oshirish', ru: 'Повышение квалификации по урологии', en: 'Advanced Urology Training' },
+            description: { uz: 'Yevropa Urologlar Assotsiatsiyasi', ru: 'Европейская Ассоциация Урологов', en: 'European Association of Urology' },
+            imageUrl: 'https://images.unsplash.com/photo-1589330694653-46d2de99798e?q=80&w=2940&auto=format&fit=crop',
+            issuedBy: 'EAU',
+            issuedDate: new Date('2023-05-15')
+        },
+        {
+            title: { uz: 'Endourologiya sertifikati', ru: 'Сертификат по эндоурологии', en: 'Endourology Certificate' },
+            description: { uz: 'Minimally invaziv jarrohlik', ru: 'Минимально инвазивная хирургия', en: 'Minimally Invasive Surgery' },
+            imageUrl: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?q=80&w=2940&auto=format&fit=crop',
+            issuedBy: 'World Endourology Society',
+            issuedDate: new Date('2022-11-20')
+        },
+        {
+            title: { uz: 'Andrologiya kursi', ru: 'Курс андрологии', en: 'Andrology Course' },
+            description: { uz: 'Erkaklar salomatligi bo\'yicha maxsus kurs', ru: 'Специальный курс по мужскому здоровью', en: 'Specialized course on Men\'s Health' },
+            imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2940&auto=format&fit=crop',
+            issuedBy: 'International Society of Andrology',
+            issuedDate: new Date('2023-09-10')
+        }
+    ]
+
+    for (const cert of certificates) {
+        await prisma.certificate.create({
+            data: {
+                title: JSON.stringify(cert.title),
+                description: JSON.stringify(cert.description),
+                imageUrl: cert.imageUrl,
+                issuedBy: cert.issuedBy,
+                issuedDate: cert.issuedDate,
+                isVisible: true
+            }
+        })
+    }
+
+    console.log('✅ Sample certificates created')
+}
+
+main()
+    .catch((e) => {
+        console.error(e)
+        process.exit(1)
+    })
+    .finally(async () => {
+        await prisma.$disconnect()
+    })

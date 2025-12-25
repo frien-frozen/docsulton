@@ -1,0 +1,214 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Admin availability settings
+model AvailabilitySettings {
+  id                String   @id @default(cuid())
+  workingHoursStart Int      @default(6)   // 6 AM
+  workingHoursEnd   Int      @default(22)  // 10 PM
+  blockedDays       String   @default("0,6") // Sunday=0, Saturday=6 (comma-separated)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String?  // Optional for OAuth users
+  name      String?
+  email     String?
+  image     String?  // Google profile picture
+  phone     String?
+  telegramId String?
+  role      String   @default("PATIENT") // ADMIN, PATIENT
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings  Booking[]
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String   // JSON string for i18n {uz:"", ru:"", en:""}
+  description String?  // JSON string
+  duration    Int      // in minutes
+  price       Int      // in UZS
+  currency    String   @default("UZS")
+  isVisible   Boolean  @default(true)
+  bookings    Booking[]
+}
+
+model TimeSlot {
+  id        String   @id @default(cuid())
+  startTime DateTime
+  endTime   DateTime
+  isBooked  Boolean  @default(false)
+  booking   Booking?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([startTime])
+}
+
+model Booking {
+  id                String     @id @default(cuid())
+  userId            String
+  user              User       @relation(fields: [userId], references: [id])
+  serviceId         String
+  service           Service    @relation(fields: [serviceId], references: [id])
+  slotId            String     @unique
+  slot              TimeSlot   @relation(fields: [slotId], references: [id])
+  status            String     @default("PENDING") // PENDING, APPROVED, REJECTED, COMPLETED, CANCELLED
+  paymentScreenshot String?
+  paymentStatus     String     @default("PENDING") // PENDING, VERIFIED, REJECTED
+  meetingLink       String?
+  notes             String?
+  
+  // Progress tracking for incomplete bookings
+  progressStep      Int        @default(1) // Current step in booking flow (1-6)
+  isComplete        Boolean    @default(false) // Whether booking was fully submitted
+  draftData         String?    // JSON string storing incomplete booking data
+  
+  // Rejection reason from admin
+  rejectionReason   String?    // Admin's reason for rejecting the booking
+  
+  // User info snapshot
+  userEmail         String?
+  
+  // Telegram authentication (legacy / for notifications)
+  telegramUsername  String?
+  telegramChatId    String?    // Required for notifications
+  reminderSent      Boolean    @default(false)
+  
+  reminders         Reminder[]
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([telegramChatId])
+  @@index([isComplete]) // Index for querying incomplete bookings
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String   // JSON string
+  description String   // JSON string
+  content     String   // JSON string
+  images      String   // JSON array
+  liveUrl     String?
+  githubUrl   String?
+  techStack   String   // JSON array
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@index([isVisible])
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String   // JSON string
+  slug        String   @unique
+  excerpt     String   // JSON string
+  content     String   // JSON string (markdown)
+  coverImage  String?
+  tags        String   // JSON array
+  category    String?
+  isPublished Boolean  @default(false)
+  isVisible   Boolean  @default(true)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([isVisible])
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  title       String   // JSON string
+  description String?  // JSON string
+  imageUrl    String
+  issuedBy    String?
+  issuedDate  DateTime?
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@index([isVisible])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+
+model Statistics {
+  id                  String   @id @default(cuid())
+  operations          Int      @default(0)
+  experienceStartYear Int      // Base year for auto-calculating experience
+  patients            Int      @default(0)
+  consultations       Int      @default(0) // Total consultations
+  successRate         Float    @default(0) // Percentage 0-100
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Operation {
+  id            String    @id @default(cuid())
+  patientName   String
+  patientPhone  String?
+  operationType String    // e.g., "Kidney Stone Removal"
+  description   String?
+  scheduledDate DateTime
+  startTime     DateTime
+  endTime       DateTime
+  status        String    @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  outcome       String?   // SUCCESS, FAILED (set after completion)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([scheduledDate])
+  @@index([status])
+}
+
+model Reminder {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  scheduledAt DateTime
+  sent        Boolean  @default(false)
+  sentAt      DateTime?
+  type        String   // USER or DOCTOR
+  createdAt   DateTime @default(now())
+  
+  @@index([scheduledAt, sent])
+  @@index([bookingId])
+}
