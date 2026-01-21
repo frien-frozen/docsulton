@@ -13,8 +13,9 @@ export async function POST(request: Request) {
         const booking = await prisma.booking.findUnique({
             where: { id: bookingId },
             select: {
-                isVerified: true,
-                verifiedAt: true
+                paymentStatus: true,
+                status: true,
+                updatedAt: true
             }
         })
 
@@ -23,8 +24,8 @@ export async function POST(request: Request) {
         }
 
         return NextResponse.json({
-            isVerified: booking.isVerified,
-            verifiedAt: booking.verifiedAt
+            isVerified: booking.paymentStatus === 'VERIFIED',
+            verifiedAt: booking.updatedAt
         })
     } catch (error) {
         console.error('Verification check error:', error)

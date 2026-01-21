@@ -55,9 +55,15 @@ export default function AdminServicesPage() {
         try {
             const res = await fetch('/api/services?all=true')
             const data = await res.json()
-            setServices(data)
+            if (Array.isArray(data)) {
+                setServices(data)
+            } else {
+                console.error('Services API returned non-array:', data)
+                setServices([])
+            }
         } catch (error) {
             console.error(error)
+            setServices([])
         } finally {
             setLoading(false)
         }

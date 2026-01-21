@@ -1,24 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function PUT(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+// PATCH - Update message (mark as read)
+export async function PATCH(
+    request: Request,
+    props: { params: Promise<{ id: string }> }
 ) {
+    const params = await props.params;
     try {
-        const session = await getServerSession(authOptions)
-        if (!session) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
-
-        const { id } = await params
+        const { id } = params
         const body = await request.json()
 
         const message = await prisma.message.update({
             where: { id },
-            data: body,
+            data: body
         })
 
         return NextResponse.json(message)
@@ -28,19 +23,17 @@ export async function PUT(
     }
 }
 
+// DELETE - Delete a message
 export async function DELETE(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    request: Request,
+    props: { params: Promise<{ id: string }> }
 ) {
+    const params = await props.params;
     try {
-        const session = await getServerSession(authOptions)
-        if (!session) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
+        const { id } = params
 
-        const { id } = await params
         await prisma.message.delete({
-            where: { id },
+            where: { id }
         })
 
         return NextResponse.json({ success: true })

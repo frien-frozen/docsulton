@@ -26,12 +26,21 @@ export async function PUT(
             }
         })
 
+        // Auto-generate meeting link if approving and none provided
+        let finalMeetingLink = meetingLink
+        if (status === 'APPROVED' && !finalMeetingLink) {
+            // Generate unique Google Meet-style link (abc-defg-hij)
+            const chars = 'abcdefghijklmnopqrstuvwxyz'
+            const gen = (len: number) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+            finalMeetingLink = `https://meet.google.com/${gen(3)}-${gen(4)}-${gen(3)}`
+        }
+
         const booking = await prisma.booking.update({
             where: { id },
             data: {
                 status,
                 paymentStatus,
-                meetingLink
+                meetingLink: finalMeetingLink
             },
             include: {
                 user: true,
@@ -54,17 +63,19 @@ export async function PUT(
                 })
             }
 
-            // Send Telegram notifications if user is verified
-            if (booking.telegramChatId && booking.isVerified && meetingLink) {
-                const slotDate = new Date(booking.slot.date)
-                const serviceName = JSON.parse(booking.service.name).uz || 'Xizmat'
+            // Send Telegram notifications if params exist
+            if (booking.telegramChatId && finalMeetingLink) {
+                const slotDate = new Date(booking.slot.startTime)
+                const formattedTime = slotDate.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' })
+                // Service name is now a plain string, no need to parse
+                const serviceName = booking.service.name || 'Xizmat'
 
                 // Send to user
                 await sendConsultationApprovedToUser(booking.telegramChatId, {
                     date: formatDateForTelegram(slotDate),
-                    time: booking.slot.time,
+                    time: formattedTime,
                     service: serviceName,
-                    meetingLink
+                    meetingLink: finalMeetingLink
                 })
 
                 // Send to doctor
@@ -72,12 +83,12 @@ export async function PUT(
                     patientName: booking.user.username,
                     patientPhone: booking.user.phone || 'N/A',
                     date: formatDateForTelegram(slotDate),
-                    time: booking.slot.time,
+                    time: formattedTime,
                     service: serviceName
                 })
 
                 // Create reminders for 10 minutes before
-                const slotDateTime = new Date(`${booking.slot.date}T${booking.slot.time}`)
+                const slotDateTime = new Date(booking.slot.startTime)
                 const reminderTime = new Date(slotDateTime.getTime() - 10 * 60 * 1000) // 10 minutes before
 
                 // Create user reminder

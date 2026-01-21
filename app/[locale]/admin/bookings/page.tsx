@@ -15,6 +15,7 @@ interface Booking {
     paymentStatus: string
     paymentScreenshot?: string
     notes?: string
+    meetingLink?: string
 }
 
 interface Service {
@@ -37,6 +38,8 @@ export default function AdminBookingsPage() {
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
+    const [selectedScreenshots, setSelectedScreenshots] = useState<string[]>([])
+    const [showScreenshotsModal, setShowScreenshotsModal] = useState(false)
 
     // Confirmation Modal State
     const [confirmModal, setConfirmModal] = useState<{
@@ -68,6 +71,9 @@ export default function AdminBookingsPage() {
 
     const fetchData = async () => {
         try {
+            // First, auto-complete any expired consultations
+            await fetch('/api/bookings/complete-expired', { method: 'POST' })
+
             const [bookingsRes, servicesRes, slotsRes] = await Promise.all([
                 fetch('/api/bookings/all'),
                 fetch('/api/services'),
@@ -79,22 +85,22 @@ export default function AdminBookingsPage() {
             const slotsData = await slotsRes.json()
 
             // Parse multilingual service names for list
-            const parsedBookings = bookingsData.map((b: any) => ({
+            const parsedBookings = Array.isArray(bookingsData) ? bookingsData.map((b: any) => ({
                 ...b,
                 service: {
                     ...b.service,
                     name: parseLocaleString(b.service.name)
                 }
-            }))
+            })) : []
 
-            const parsedServices = servicesData.map((s: any) => ({
+            const parsedServices = Array.isArray(servicesData) ? servicesData.map((s: any) => ({
                 ...s,
                 name: parseLocaleString(s.name)
-            }))
+            })) : []
 
             setBookings(parsedBookings)
             setServices(parsedServices)
-            setSlots(slotsData)
+            setSlots(Array.isArray(slotsData) ? slotsData : [])
         } catch (error) {
             console.error(error)
         } finally {
@@ -304,10 +310,12 @@ export default function AdminBookingsPage() {
                                         <div className="flex items-center gap-3">
                                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${booking.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
                                                 booking.status === 'APPROVED' ? 'bg-green-100 text-green-700 border border-green-200' :
-                                                    'bg-red-100 text-red-700 border border-red-200'
+                                                    booking.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                                                        'bg-red-100 text-red-700 border border-red-200'
                                                 }`}>
                                                 {booking.status === 'PENDING' ? 'Kutilmoqda' :
-                                                    booking.status === 'APPROVED' ? 'Tasdiqlandi' : 'Bekor qilindi'}
+                                                    booking.status === 'APPROVED' ? 'Tasdiqlandi' :
+                                                        booking.status === 'COMPLETED' ? 'Yakunlandi' : 'Bekor qilindi'}
                                             </span>
                                             <span className="text-gray-400 text-xs font-mono">#{booking.id.slice(-6)}</span>
                                         </div>
@@ -357,10 +365,27 @@ export default function AdminBookingsPage() {
                                             </>
                                         )}
                                         {booking.paymentScreenshot && (
-                                            <a href={booking.paymentScreenshot} target="_blank" rel="noopener noreferrer"
-                                                className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition flex items-center gap-2 font-medium">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    try {
+                                                        const screenshots = JSON.parse(booking.paymentScreenshot!)
+                                                        if (Array.isArray(screenshots)) {
+                                                            setSelectedScreenshots(screenshots)
+                                                            setShowScreenshotsModal(true)
+                                                        } else {
+                                                            // Single screenshot (old format)
+                                                            window.open(booking.paymentScreenshot, '_blank')
+                                                        }
+                                                    } catch {
+                                                        // Not JSON, treat as single URL
+                                                        window.open(booking.paymentScreenshot, '_blank')
+                                                    }
+                                                }}
+                                                className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition flex items-center gap-2 font-medium"
+                                            >
                                                 <FileText className="w-4 h-4" /> Chek
-                                            </a>
+                                            </button>
                                         )}
                                         <button
                                             type="button"
@@ -370,6 +395,15 @@ export default function AdminBookingsPage() {
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
+
+                                        {booking.meetingLink && (
+                                            <a href={booking.meetingLink} target="_blank" rel="noopener noreferrer"
+                                                className="px-4 py-2.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl transition flex items-center gap-2 font-medium"
+                                                title="Video konsultatsiyaga kirish"
+                                            >
+                                                <Video className="w-4 h-4" />
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             </motion.div>
@@ -467,7 +501,6 @@ export default function AdminBookingsPage() {
                     )}
                 </AnimatePresence>
 
-                {/* Custom Confirmation Modal */}
                 <ConfirmModal
                     isOpen={confirmModal.isOpen}
                     onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
@@ -476,6 +509,43 @@ export default function AdminBookingsPage() {
                     message={confirmModal.message}
                     type={confirmModal.type}
                 />
+
+                {/* Screenshots Modal */}
+                <AnimatePresence>
+                    {showScreenshotsModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="bg-white p-6 rounded-3xl w-full max-w-lg shadow-2xl"
+                            >
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-xl font-bold text-gray-900">To'lov cheklari ({selectedScreenshots.length} ta)</h2>
+                                    <button onClick={() => setShowScreenshotsModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition">
+                                        <X className="w-6 h-6 text-gray-500" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                                    {selectedScreenshots.map((screenshot, index) => (
+                                        <a
+                                            key={index}
+                                            href={screenshot}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition"
+                                        >
+                                            <FileText className="w-6 h-6 text-blue-600" />
+                                            <span className="font-medium text-gray-900">Chek #{index + 1}</span>
+                                            <span className="text-sm text-gray-500 truncate flex-1">{screenshot.split('/').pop()}</span>
+                                        </a>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     )

@@ -6,14 +6,12 @@ export async function GET() {
         const [
             totalBookings,
             pendingBookings,
-            totalProjects,
             totalPosts,
             totalServices,
             recentBookings
         ] = await Promise.all([
             prisma.booking.count(),
             prisma.booking.count({ where: { status: 'PENDING' } }),
-            prisma.project.count(),
             prisma.post.count(),
             prisma.service.count(),
             prisma.booking.findMany({
@@ -31,12 +29,22 @@ export async function GET() {
                 total: totalBookings,
                 pending: pendingBookings
             },
-            projects: totalProjects,
             posts: totalPosts,
             services: totalServices,
             recentBookings
         })
     } catch (error) {
-        return NextResponse.json({ error: 'Error fetching stats' }, { status: 500 })
+        console.error('Admin Stats API Error:', error)
+        if (error instanceof Error) {
+            console.error('Stack:', error.stack)
+        }
+        console.warn('Returning default empty stats due to error')
+        return NextResponse.json({
+            bookings: { total: 0, pending: 0 },
+            projects: 0,
+            posts: 0,
+            services: 0,
+            recentBookings: []
+        })
     }
 }

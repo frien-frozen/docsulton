@@ -107,7 +107,7 @@ export default function ServicesPage() {
                                 </ul>
 
                                 <Link
-                                    href="/booking"
+                                    href="/consultation"
                                     className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all 
                                         ${service.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30' :
                                             service.color === 'green' ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/30' :

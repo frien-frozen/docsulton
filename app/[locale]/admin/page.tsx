@@ -1,8 +1,8 @@
-'use client'
+    'use client'
 
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { Calendar, Briefcase, FileText, Award, Stethoscope } from 'lucide-react'
+import { Calendar, FileText, Award, Stethoscope } from 'lucide-react'
 import Link from 'next/link'
 
 interface DashboardStats {
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(err => console.error(err))
-            .finally(() => setLoading(false))
+            .finally(() => setLoading(false))       
     }, [])
 
     if (loading) {
@@ -43,7 +43,7 @@ export default function AdminDashboard() {
                 <p className="text-gray-500 mt-1">Xush kelibsiz, {session?.user?.name || 'Admin'}!</p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 <Link href="/admin/bookings" className="floating-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-blue-300 transition-all duration-300 group">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-semibold text-gray-600">Konsultatsiyalar</h3>
@@ -52,21 +52,11 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                     <p className="text-3xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                        {stats?.bookings.total || 0}
+                        {stats?.bookings?.total || 0}
                     </p>
                     <div className="flex items-center gap-1 mt-2 text-orange-600 text-sm font-medium">
-                        <span>{stats?.bookings.pending} ta kutilmoqda</span>
+                        <span>{stats?.bookings?.pending || 0} ta kutilmoqda</span>
                     </div>
-                </Link>
-
-                <Link href="/admin/projects" className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-semibold text-gray-600">Loyihalar</h3>
-                        <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
-                            <Briefcase className="w-6 h-6" />
-                        </div>
-                    </div>
-                    <p className="text-3xl font-bold text-gray-900">{stats?.projects || 0}</p>
                 </Link>
 
                 <Link href="/admin/services" className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
@@ -104,14 +94,14 @@ export default function AdminDashboard() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {stats?.recentBookings.map((booking: any) => (
+                            {stats?.recentBookings?.map((booking: any) => (
                                 <tr key={booking.id} className="text-sm">
                                     <td className="py-4 font-medium text-gray-900">{booking.user.username}</td>
                                     <td className="py-4 text-gray-600">{JSON.parse(booking.service.name).uz || 'Xizmat'}</td>
                                     <td className="py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-bold ${booking.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' :
-                                                booking.status === 'APPROVED' ? 'bg-green-50 text-green-600' :
-                                                    'bg-red-50 text-red-600'
+                                            booking.status === 'APPROVED' ? 'bg-green-50 text-green-600' :
+                                                'bg-red-50 text-red-600'
                                             }`}>
                                             {booking.status}
                                         </span>

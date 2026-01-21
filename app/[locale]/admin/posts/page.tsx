@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Plus, Search, Trash2, Edit2, Eye, EyeOff, FileText, Calendar } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Plus, Search, Trash2, Edit2, Eye, EyeOff, Calendar, Upload, X, Image as ImageIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import MultiLangInput from '@/components/ui/MultiLangInput'
 import { format } from 'date-fns'
 import { useModal } from '@/contexts/ModalContext'
+import { uploadToFirebase } from '@/lib/storage'
 
 interface Post {
     id: string
-    title: string // JSON
+    title: string
     slug: string
-    excerpt: string // JSON
-    content: string // JSON
+    excerpt: string
+    content: string
     coverImage: string
     tags: string // JSON array
     isPublished: boolean
@@ -26,12 +26,14 @@ export default function AdminPostsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<Post | null>(null)
     const [searchTerm, setSearchTerm] = useState('')
+    const [uploading, setUploading] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
-    // Form State
+    // Form State - simplified to plain strings
     const [formData, setFormData] = useState({
-        title: JSON.stringify({ uz: '', ru: '', en: '' }),
-        excerpt: JSON.stringify({ uz: '', ru: '', en: '' }),
-        content: JSON.stringify({ uz: '', ru: '', en: '' }),
+        title: '',
+        excerpt: '',
+        content: '',
         coverImage: '',
         tags: '[]',
         isPublished: false
@@ -45,20 +47,44 @@ export default function AdminPostsPage() {
         try {
             const res = await fetch('/api/posts')
             const data = await res.json()
-            setPosts(data)
+            if (Array.isArray(data)) {
+                setPosts(data)
+            } else {
+                console.error('Posts API returned non-array:', data)
+                setPosts([])
+            }
         } catch (error) {
             console.error(error)
+            setPosts([])
         } finally {
             setLoading(false)
         }
     }
 
-    const parseLocale = (json: string, lang = 'uz') => {
+    // Parse title - handles both old JSON format and new plain string
+    const parseTitle = (title: string) => {
         try {
-            const obj = JSON.parse(json)
-            return obj[lang] || Object.values(obj)[0] || ''
-        } catch (e) {
-            return json
+            const obj = JSON.parse(title)
+            return obj.uz || obj.en || obj.ru || title
+        } catch {
+            return title
+        }
+    }
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setUploading(true)
+        try {
+            const url = await uploadToFirebase(file, 'posts')
+            setFormData(prev => ({ ...prev, coverImage: url }))
+        } catch (error) {
+            console.error(error)
+            modal.showError('Xatolik', 'Rasm yuklanmadi')
+        } finally {
+            setUploading(false)
+            if (e.target) e.target.value = ''
         }
     }
 
@@ -110,9 +136,9 @@ export default function AdminPostsPage() {
     const openEdit = (post: Post) => {
         setEditingPost(post)
         setFormData({
-            title: post.title,
-            excerpt: post.excerpt,
-            content: post.content,
+            title: parseTitle(post.title),
+            excerpt: parseTitle(post.excerpt),
+            content: parseTitle(post.content),
             coverImage: post.coverImage || '',
             tags: post.tags,
             isPublished: post.isPublished
@@ -122,9 +148,9 @@ export default function AdminPostsPage() {
 
     const resetForm = () => {
         setFormData({
-            title: JSON.stringify({ uz: '', ru: '', en: '' }),
-            excerpt: JSON.stringify({ uz: '', ru: '', en: '' }),
-            content: JSON.stringify({ uz: '', ru: '', en: '' }),
+            title: '',
+            excerpt: '',
+            content: '',
             coverImage: '',
             tags: '[]',
             isPublished: false
@@ -144,9 +170,8 @@ export default function AdminPostsPage() {
         } catch { return '' }
     }
 
-
     const filteredPosts = posts.filter(p =>
-        parseLocale(p.title).toLowerCase().includes(searchTerm.toLowerCase())
+        parseTitle(p.title).toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     return (
@@ -182,7 +207,9 @@ export default function AdminPostsPage() {
 
                 <div className="space-y-4">
                     {loading ? (
-                        <div className="text-center py-20">Loading...</div>
+                        <div className="text-center py-20">Yuklanmoqda...</div>
+                    ) : filteredPosts.length === 0 ? (
+                        <div className="text-center py-20 text-gray-500">Maqolalar topilmadi</div>
                     ) : (
                         filteredPosts.map((post) => (
                             <motion.div
@@ -200,7 +227,7 @@ export default function AdminPostsPage() {
                                 <div className="flex-1 space-y-2 w-full">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{parseLocale(post.title)}</h3>
+                                            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{parseTitle(post.title)}</h3>
                                             <p className="text-sm text-gray-400 font-mono">/{post.slug}</p>
                                         </div>
                                         <div className="flex gap-2 shrink-0">
@@ -214,7 +241,7 @@ export default function AdminPostsPage() {
                                     </div>
 
                                     <p className="text-gray-600 text-sm line-clamp-2">
-                                        {parseLocale(post.excerpt)}
+                                        {parseTitle(post.excerpt)}
                                     </p>
 
                                     <div className="flex flex-wrap gap-4 pt-2 text-sm text-gray-500">
@@ -225,18 +252,24 @@ export default function AdminPostsPage() {
                                         <div className="flex items-center gap-2">
                                             {post.isPublished ? (
                                                 <span className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                                                    <Eye className="w-3 h-3" /> Published
+                                                    <Eye className="w-3 h-3" /> Nashr qilingan
                                                 </span>
                                             ) : (
                                                 <span className="flex items-center gap-1 text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                                    <EyeOff className="w-3 h-3" /> Draft
+                                                    <EyeOff className="w-3 h-3" /> Qoralama
                                                 </span>
                                             )}
                                         </div>
                                         <div className="flex gap-2">
-                                            {JSON.parse(post.tags).map((tag: string, i: number) => (
-                                                <span key={i} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md">#{tag}</span>
-                                            ))}
+                                            {(() => {
+                                                try {
+                                                    return JSON.parse(post.tags).map((tag: string, i: number) => (
+                                                        <span key={i} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md">#{tag}</span>
+                                                    ))
+                                                } catch {
+                                                    return null
+                                                }
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
@@ -252,78 +285,114 @@ export default function AdminPostsPage() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                className="bg-white p-8 rounded-3xl w-full max-w-4xl shadow-2xl my-8 relative"
+                                className="bg-white p-8 rounded-3xl w-full max-w-3xl shadow-2xl my-8 relative"
                             >
                                 <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition">
-                                    <p className="text-xl">×</p>
+                                    <X className="w-5 h-5" />
                                 </button>
 
                                 <h2 className="text-2xl font-bold text-gray-900 mb-6">{editingPost ? 'Maqolani tahrirlash' : 'Yangi maqola'}</h2>
 
                                 <form onSubmit={handleSave} className="space-y-6">
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                        <div className="space-y-6">
-                                            <MultiLangInput
-                                                label="Sarlavha"
-                                                value={formData.title}
-                                                onChange={v => setFormData({ ...formData, title: v })}
-                                                required
-                                            />
-
-                                            <MultiLangInput
-                                                label="Qisqacha (Excerpt)"
-                                                value={formData.excerpt}
-                                                onChange={v => setFormData({ ...formData, excerpt: v })}
-                                                type="textarea"
-                                            />
-
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image URL</label>
-                                                <input
-                                                    type="url"
-                                                    value={formData.coverImage}
-                                                    onChange={e => setFormData({ ...formData, coverImage: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
-                                                    placeholder="https://..."
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Teglar (vergul bilan)</label>
-                                                <input
-                                                    type="text"
-                                                    value={getTagsText()}
-                                                    onChange={e => handleTagsChange(e.target.value)}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
-                                                    placeholder="health, urology, tips"
-                                                />
-                                            </div>
-
-                                            <label className="flex items-center gap-2 cursor-pointer pt-2">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.isPublished}
-                                                    onChange={e => setFormData({ ...formData, isPublished: e.target.checked })}
-                                                    className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500"
-                                                />
-                                                <span className="font-medium text-gray-700">Nashr qilish (Publish)</span>
-                                            </label>
-                                        </div>
-
-                                        <div className="h-full">
-                                            <MultiLangInput
-                                                label="Asosiy Matn (Markdown)"
-                                                value={formData.content}
-                                                onChange={v => setFormData({ ...formData, content: v })}
-                                                type="textarea"
-                                            />
-                                            <p className="text-xs text-gray-400 mt-2">Markdown formatini qo'llab-quvvatlaydi.</p>
-                                        </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Sarlavha *</label>
+                                        <input
+                                            type="text"
+                                            value={formData.title}
+                                            onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                            placeholder="Maqola sarlavhasi"
+                                            required
+                                        />
                                     </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Qisqacha tavsif</label>
+                                        <textarea
+                                            value={formData.excerpt}
+                                            onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                            placeholder="Maqola haqida qisqacha..."
+                                            rows={2}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Muqova rasmi</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            ref={fileInputRef}
+                                            onChange={handleImageUpload}
+                                            className="hidden"
+                                        />
+
+                                        {formData.coverImage ? (
+                                            <div className="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200">
+                                                <img src={formData.coverImage} alt="Cover" className="w-full h-full object-cover" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, coverImage: '' })}
+                                                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()}
+                                                disabled={uploading}
+                                                className="w-full h-32 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50/50 transition disabled:opacity-50"
+                                            >
+                                                {uploading ? (
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                                ) : (
+                                                    <>
+                                                        <ImageIcon className="w-8 h-8 text-gray-400" />
+                                                        <span className="text-sm text-gray-500">Rasm yuklash uchun bosing</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Asosiy matn (Markdown)</label>
+                                        <textarea
+                                            value={formData.content}
+                                            onChange={e => setFormData({ ...formData, content: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none font-mono text-sm"
+                                            placeholder="Maqola matni..."
+                                            rows={10}
+                                        />
+                                        <p className="text-xs text-gray-400 mt-1">Markdown formatini qo'llab-quvvatlaydi</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Teglar (vergul bilan)</label>
+                                        <input
+                                            type="text"
+                                            value={getTagsText()}
+                                            onChange={e => handleTagsChange(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                            placeholder="sog'liq, urologiya, maslahatlar"
+                                        />
+                                    </div>
+
+                                    <label className="flex items-center gap-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.isPublished}
+                                            onChange={e => setFormData({ ...formData, isPublished: e.target.checked })}
+                                            className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span className="font-medium text-gray-700">Nashr qilish</span>
+                                    </label>
 
                                     <button
                                         type="submit"
-                                        className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 mt-4"
+                                        className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20"
                                     >
                                         Saqlash
                                     </button>

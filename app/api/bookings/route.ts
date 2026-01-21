@@ -4,13 +4,42 @@ import { prisma } from '@/lib/prisma'
 export async function POST(request: Request) {
     try {
         const body = await request.json()
-        const { serviceId, slotId, name, phone, notes, userEmail, userName, userImage } = body
+        const { serviceId, slotId, startTime, name, phone, notes, userEmail, userName, userImage } = body
 
         if (!userEmail) {
             return NextResponse.json(
                 { error: 'Authentication details required' },
                 { status: 401 }
             )
+        }
+
+        // Logic to determine Slot ID (Dynamic creation)
+        let finalSlotId = slotId
+        if (startTime) {
+            const startDateTime = new Date(startTime)
+            // Try to find existing slot
+            let slot = await prisma.timeSlot.findFirst({
+                where: { startTime: startDateTime }
+            })
+
+            if (!slot) {
+                // Create new slot on the fly
+                // Default duration 30 mins
+                const endDateTime = new Date(startDateTime.getTime() + 30 * 60000)
+                slot = await prisma.timeSlot.create({
+                    data: {
+                        startTime: startDateTime,
+                        endTime: endDateTime,
+                        isBooked: false
+                    }
+                })
+            } else if (slot.isBooked) {
+                return NextResponse.json(
+                    { error: 'Uzur, bu vaqt band qilingan' },
+                    { status: 400 }
+                )
+            }
+            finalSlotId = slot.id
         }
 
         // Create or update user
@@ -59,7 +88,7 @@ export async function POST(request: Request) {
             data: {
                 userId: user.id,
                 serviceId,
-                slotId,
+                slotId: finalSlotId, // Use the resolved ID
                 notes,
                 status: 'PENDING',
                 userEmail: userEmail,
@@ -74,7 +103,7 @@ export async function POST(request: Request) {
 
         // Mark slot as booked
         await prisma.timeSlot.update({
-            where: { id: slotId },
+            where: { id: finalSlotId },
             data: { isBooked: true }
         })
 

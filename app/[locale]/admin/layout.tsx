@@ -6,16 +6,15 @@ import { useEffect, useState } from 'react'
 import {
     LayoutDashboard,
     Calendar,
-    Briefcase,
     FileText,
-    Award,
     Settings,
     LogOut,
     Menu,
     X,
     Stethoscope,
     TrendingUp,
-    Activity
+    Bell,
+    Clock
 } from 'lucide-react'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
@@ -56,12 +55,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const menuItems = [
         { name: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
         { name: 'Konsultatsiyalar', icon: Calendar, href: '/admin/bookings' },
-        { name: 'Operatsiyalar', icon: Activity, href: '/admin/operations' },
         { name: 'Statistika', icon: TrendingUp, href: '/admin/statistics' },
         { name: 'Xizmatlar', icon: Stethoscope, href: '/admin/services' },
-        { name: 'Loyihalar', icon: Briefcase, href: '/admin/projects' },
+        { name: 'Vaqt sozlamalari', icon: Clock, href: '/admin/availability' },
         { name: 'Blog Postlar', icon: FileText, href: '/admin/posts' },
-        { name: 'Sertifikatlar', icon: Award, href: '/admin/certificates' },
+        { name: 'Xabarlar', icon: Bell, href: '/admin/notifications' },
     ]
 
     return (

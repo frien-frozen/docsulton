@@ -36,8 +36,8 @@ model User {
 
 model Service {
   id          String   @id @default(cuid())
-  name        String   // JSON string for i18n {uz:"", ru:"", en:""}
-  description String?  // JSON string
+  name        String   
+  description String?  
   duration    Int      // in minutes
   price       Int      // in UZS
   currency    String   @default("UZS")
@@ -98,31 +98,14 @@ model Booking {
   @@index([isComplete]) // Index for querying incomplete bookings
 }
 
-model Project {
-  id          String   @id @default(cuid())
-  title       String   // JSON string
-  description String   // JSON string
-  content     String   // JSON string
-  images      String   // JSON array
-  liveUrl     String?
-  githubUrl   String?
-  techStack   String   // JSON array
-  order       Int      @default(0)
-  isVisible   Boolean  @default(true)
-  featured    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  @@index([order])
-  @@index([isVisible])
-}
 
 model Post {
   id          String   @id @default(cuid())
-  title       String   // JSON string
+  title       String   
   slug        String   @unique
-  excerpt     String   // JSON string
-  content     String   // JSON string (markdown)
+  excerpt     String   
+  content     String   // markdown text
   coverImage  String?
   tags        String   // JSON array
   category    String?
@@ -137,21 +120,7 @@ model Post {
   @@index([isVisible])
 }
 
-model Certificate {
-  id          String   @id @default(cuid())
-  title       String   // JSON string
-  description String?  // JSON string
-  imageUrl    String
-  issuedBy    String?
-  issuedDate  DateTime?
-  order       Int      @default(0)
-  isVisible   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  @@index([order])
-  @@index([isVisible])
-}
 
 model Message {
   id        String   @id @default(cuid())
@@ -180,24 +149,7 @@ model Statistics {
   updatedAt           DateTime @updatedAt
 }
 
-model Operation {
-  id            String    @id @default(cuid())
-  patientName   String
-  patientPhone  String?
-  operationType String    // e.g., "Kidney Stone Removal"
-  description   String?
-  scheduledDate DateTime
-  startTime     DateTime
-  endTime       DateTime
-  status        String    @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
-  outcome       String?   // SUCCESS, FAILED (set after completion)
-  notes         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
 
-  @@index([scheduledDate])
-  @@index([status])
-}
 
 model Reminder {
   id          String   @id @default(cuid())
@@ -211,4 +163,16 @@ model Reminder {
   
   @@index([scheduledAt, sent])
   @@index([bookingId])
+}
+
+model BlockedTime {
+  id        String    @id @default(cuid())
+  type      String    // "RECURRING" or "DATE"
+  dayOfWeek Int?      // 0=Sunday, 1=Monday...
+  date      DateTime? // Specific date
+  startTime String    // "HH:mm"
+  endTime   String    // "HH:mm"
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

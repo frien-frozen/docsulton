@@ -70,11 +70,15 @@ Konsultatsiya vaqtidan 10 daqiqa oldin eslatma yuboriladi.
                 let message = '📋 <b>Sizning konsultatsiyalaringiz:</b>\n\n'
 
                 bookings.forEach((booking, index) => {
-                    const serviceName = JSON.parse(booking.service.name).uz || 'Xizmat'
-                    const slotDate = new Date(booking.slot.date)
+                    const serviceName = booking.service.name || 'Xizmat'
+                    const slotDate = new Date(booking.slot.startTime)
                     const dateStr = slotDate.toLocaleDateString('uz-UZ', {
                         month: 'short',
                         day: 'numeric'
+                    })
+                    const timeStr = slotDate.toLocaleTimeString('uz-UZ', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                     })
 
                     const statusEmoji = booking.status === 'APPROVED' ? '✅' :
@@ -82,7 +86,7 @@ Konsultatsiya vaqtidan 10 daqiqa oldin eslatma yuboriladi.
                             booking.status === 'REJECTED' ? '❌' : '📅'
 
                     message += `${index + 1}. ${statusEmoji} ${serviceName}\n`
-                    message += `   📅 ${dateStr} ${booking.slot.time}\n`
+                    message += `   📅 ${dateStr} ${timeStr}\n`
                     message += `   Status: ${booking.status}\n\n`
                 })
 
@@ -147,12 +151,14 @@ export async function GET(request: Request) {
 
         if (action === 'setWebhook') {
             const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/telegram/webhook`
-            await bot.setWebhook(webhookUrl)
+            // @ts-ignore - node-telegram-bot-api types might have casing issues
+            await bot.setWebHook(webhookUrl)
             return NextResponse.json({ ok: true, webhookUrl })
         }
 
         if (action === 'getWebhookInfo') {
-            const info = await bot.getWebhookInfo()
+            // @ts-ignore
+            const info = await bot.getWebHookInfo()
             return NextResponse.json(info)
         }
 

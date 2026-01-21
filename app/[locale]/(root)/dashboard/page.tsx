@@ -33,7 +33,7 @@ export default function DashboardPage({ params }: { params: { locale: string } }
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser)
             if (!currentUser) {
-                router.push(`/${locale}/booking`)
+                router.push(`/${locale}/consultation`)
             }
         })
         return () => unsubscribe()
@@ -116,26 +116,26 @@ export default function DashboardPage({ params }: { params: { locale: string } }
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'APPROVED':
-                return <span className="badge badge-success">{t('status.APPROVED')}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">{t('status.APPROVED')}</span>
             case 'PENDING':
-                return <span className="badge badge-warning">{t('status.PENDING')}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 border border-yellow-200">{t('status.PENDING')}</span>
             case 'REJECTED':
-                return <span className="badge badge-error">{t('status.REJECTED')}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">{t('status.REJECTED')}</span>
             default:
-                return <span className="badge badge-neutral">{status}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">{status}</span>
         }
     }
 
     const getPaymentBadge = (status: string) => {
         switch (status) {
             case 'VERIFIED':
-                return <span className="badge badge-success">{t('payment.VERIFIED')}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">{t('payment.VERIFIED')}</span>
             case 'PENDING':
-                return <span className="badge badge-warning">{t('payment.PENDING')}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 border border-yellow-200">{t('payment.PENDING')}</span>
             case 'REJECTED':
-                return <span className="badge badge-error">{t('payment.REJECTED')}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">{t('payment.REJECTED')}</span>
             default:
-                return <span className="badge badge-neutral">{status}</span>
+                return <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">{status}</span>
         }
     }
 
@@ -143,21 +143,29 @@ export default function DashboardPage({ params }: { params: { locale: string } }
         <div className="min-h-screen gradient-soft pt-24 pb-12 px-4">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <div className="mb-12">
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <Heart className="w-8 h-8 text-white" />
+                <div className="mb-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pointer-events-none">
+                    <div className="flex items-center gap-6">
+                        {/* Distinct Icon */}
+                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg shadow-blue-100 border border-blue-50">
+                            <Heart className="w-9 h-9 text-blue-600 fill-blue-50" />
                         </div>
-                        <div>
-                            <h1 className="text-4xl font-bold gradient-text">{t('title')}</h1>
-                            <p className="text-gray-600">{t('subtitle')}</p>
+
+                        {/* Separated Text Elements */}
+                        <div className="flex flex-col gap-1">
+                            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+                                {t('title')}
+                            </h1>
+                            <div className="flex items-center gap-2">
+                                <div className="h-1 w-8 bg-blue-500 rounded-full"></div>
+                                <p className="text-gray-500 font-medium">{t('subtitle')}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Stats Cards */}
                 <div className="grid md:grid-cols-3 gap-6 mb-12">
-                    <div className="glass-light p-6 rounded-2xl">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
                                 <Calendar className="w-7 h-7 text-blue-600" />
@@ -169,7 +177,7 @@ export default function DashboardPage({ params }: { params: { locale: string } }
                         </div>
                     </div>
 
-                    <div className="glass-light p-6 rounded-2xl">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
                                 <CheckCircle className="w-7 h-7 text-green-600" />
@@ -183,7 +191,7 @@ export default function DashboardPage({ params }: { params: { locale: string } }
                         </div>
                     </div>
 
-                    <div className="glass-light p-6 rounded-2xl">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
                                 <AlertCircle className="w-7 h-7 text-orange-600" />
@@ -201,7 +209,7 @@ export default function DashboardPage({ params }: { params: { locale: string } }
                 {/* New Booking Button */}
                 <div className="mb-8 flex justify-end">
                     <Button
-                        onClick={() => router.push(`/${locale}/booking`)}
+                        onClick={() => router.push(`/${locale}/consultation`)}
                         variant="primary"
                         className="flex items-center gap-2"
                     >
@@ -221,22 +229,19 @@ export default function DashboardPage({ params }: { params: { locale: string } }
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="floating-card-subtle p-6 relative overflow-hidden"
+                                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-shadow"
                             >
-                                {/* Decorative gradient */}
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-transparent rounded-full blur-2xl opacity-50"></div>
-
                                 <div className="relative z-10">
                                     <div className="flex flex-col md:flex-row justify-between gap-6">
                                         {/* Left Section */}
                                         <div className="flex-1">
                                             <div className="flex items-start gap-4 mb-4">
-                                                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                                                    <Video className="w-7 h-7 text-white" />
+                                                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                                    <Video className="w-6 h-6 text-blue-600" />
                                                 </div>
                                                 <div className="flex-1">
                                                     <h3 className="text-xl font-bold text-gray-900 mb-2">{booking.service.name}</h3>
-                                                    <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                                                    <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                                                         <span className="flex items-center gap-1.5">
                                                             <Calendar className="w-4 h-4" />
                                                             {format(new Date(booking.slot.startTime), 'dd MMMM yyyy')}
@@ -251,9 +256,9 @@ export default function DashboardPage({ params }: { params: { locale: string } }
 
                                             {/* Countdown Timer */}
                                             {booking.status === 'APPROVED' && timeUntil[booking.id] && (
-                                                <div className="mt-4 bg-blue-50 p-4 rounded-xl">
-                                                    <p className="text-sm text-gray-600 mb-1">Time until consultation</p>
-                                                    <p className="text-2xl font-bold text-blue-600">
+                                                <div className="mt-4 bg-blue-50 p-4 rounded-xl inline-block pr-8">
+                                                    <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">Boshlanishiga</p>
+                                                    <p className="text-2xl font-bold text-blue-700 font-mono">
                                                         {timeUntil[booking.id]}
                                                     </p>
                                                 </div>
@@ -261,43 +266,43 @@ export default function DashboardPage({ params }: { params: { locale: string } }
 
                                             <div className="flex flex-wrap gap-2 mt-4">
                                                 {getStatusBadge(booking.status)}
-                                                {getPaymentBadge(booking.paymentStatus)}
+                                                {/* Only show payment badge if it's different/relevant, otherwise it's redundant */}
+                                                {booking.paymentStatus !== booking.status && getPaymentBadge(booking.paymentStatus)}
                                             </div>
                                         </div>
 
                                         {/* Right Section */}
-                                        <div className="flex flex-col gap-3 md:items-end">
+                                        <div className="flex flex-col gap-3 md:items-end justify-between">
                                             <div className="text-right">
-                                                <div className="text-2xl font-bold text-blue-600">
-                                                    {booking.service.price.toLocaleString()} UZS
+                                                <div className="text-2xl font-bold text-gray-900">
+                                                    {booking.service.price.toLocaleString()} <span className="text-sm font-normal text-gray-500">UZS</span>
                                                 </div>
                                             </div>
 
                                             {booking.meetingLink && booking.status === 'APPROVED' && (
-                                                <div className="flex flex-col gap-2">
+                                                <div className="flex flex-col gap-2 w-full md:w-auto">
                                                     <a
                                                         href={booking.meetingLink}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="btn btn-primary flex items-center gap-2"
+                                                        className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 font-medium"
                                                     >
                                                         <Video className="w-4 h-4" />
                                                         {t('actions.join')}
-                                                        <ExternalLink className="w-4 h-4" />
                                                     </a>
 
                                                     <button
                                                         onClick={() => copyMeetingLink(booking.meetingLink!, booking.id)}
-                                                        className="btn btn-outline text-sm"
+                                                        className="px-6 py-2 text-sm text-gray-500 hover:text-gray-700 transition flex items-center justify-center gap-2"
                                                     >
                                                         {copiedId === booking.id ? (
                                                             <>
-                                                                <CheckCircle className="w-4 h-4" />
+                                                                <CheckCircle className="w-3 h-3" />
                                                                 {t('actions.copied')}
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <Copy className="w-4 h-4" />
+                                                                <Copy className="w-3 h-3" />
                                                                 {t('actions.copyLink')}
                                                             </>
                                                         )}
@@ -306,8 +311,8 @@ export default function DashboardPage({ params }: { params: { locale: string } }
                                             )}
 
                                             {booking.status === 'PENDING' && (
-                                                <div className="glass-light p-4 rounded-xl text-sm text-gray-600 max-w-xs">
-                                                    <AlertCircle className="w-5 h-5 text-orange-500 mb-2" />
+                                                <div className="bg-orange-50 p-4 rounded-xl text-sm text-orange-700 max-w-xs border border-orange-100 flex gap-3">
+                                                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
                                                     <p>{t('pendingMessage')}</p>
                                                 </div>
                                             )}
@@ -327,7 +332,7 @@ export default function DashboardPage({ params }: { params: { locale: string } }
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('empty.title')}</h3>
                         <p className="text-gray-600 mb-6">{t('empty.desc')}</p>
-                        <a href="/booking" className="btn btn-primary inline-flex">
+                        <a href="/consultation" className="btn btn-primary inline-flex">
                             <Calendar className="w-5 h-5" />
                             {t('empty.button')}
                         </a>

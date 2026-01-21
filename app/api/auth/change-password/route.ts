@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         }
 
         const { compare } = await import('bcryptjs')
-        const isValid = await compare(currentPassword, user.password)
+        const isValid = await compare(currentPassword, user.password || '')
 
         if (!isValid) {
             return NextResponse.json({ error: 'Current password is incorrect' }, { status: 400 })

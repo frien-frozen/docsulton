@@ -87,21 +87,7 @@ async function main() {
 
     console.log('✅ Time slots created')
 
-    // Create sample project
-    await prisma.project.create({
-        data: {
-            title: JSON.stringify({ uz: 'Namuna loyiha', ru: 'Пример проекта', en: 'Sample Project' }),
-            description: JSON.stringify({ uz: 'Bu namuna loyiha', ru: 'Это пример проекта', en: 'This is a sample project' }),
-            content: JSON.stringify({ uz: 'Loyiha haqida', ru: 'О проекте', en: 'About project' }),
-            images: JSON.stringify([]),
-            techStack: JSON.stringify(['Next.js', 'TypeScript']),
-            order: 1,
-            isVisible: true,
-            featured: true
-        }
-    })
 
-    console.log('✅ Sample project created')
 
     // Create sample blog posts
     const posts = [
@@ -176,45 +162,7 @@ async function main() {
 
     console.log('✅ Sample blog posts created')
 
-    // Create sample certificates
-    const certificates = [
-        {
-            title: { uz: 'Urologiya buyicha malaka oshirish', ru: 'Повышение квалификации по урологии', en: 'Advanced Urology Training' },
-            description: { uz: 'Yevropa Urologlar Assotsiatsiyasi', ru: 'Европейская Ассоциация Урологов', en: 'European Association of Urology' },
-            imageUrl: 'https://images.unsplash.com/photo-1589330694653-46d2de99798e?q=80&w=2940&auto=format&fit=crop',
-            issuedBy: 'EAU',
-            issuedDate: new Date('2023-05-15')
-        },
-        {
-            title: { uz: 'Endourologiya sertifikati', ru: 'Сертификат по эндоурологии', en: 'Endourology Certificate' },
-            description: { uz: 'Minimally invaziv jarrohlik', ru: 'Минимально инвазивная хирургия', en: 'Minimally Invasive Surgery' },
-            imageUrl: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?q=80&w=2940&auto=format&fit=crop',
-            issuedBy: 'World Endourology Society',
-            issuedDate: new Date('2022-11-20')
-        },
-        {
-            title: { uz: 'Andrologiya kursi', ru: 'Курс андрологии', en: 'Andrology Course' },
-            description: { uz: 'Erkaklar salomatligi bo\'yicha maxsus kurs', ru: 'Специальный курс по мужскому здоровью', en: 'Specialized course on Men\'s Health' },
-            imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2940&auto=format&fit=crop',
-            issuedBy: 'International Society of Andrology',
-            issuedDate: new Date('2023-09-10')
-        }
-    ]
 
-    for (const cert of certificates) {
-        await prisma.certificate.create({
-            data: {
-                title: JSON.stringify(cert.title),
-                description: JSON.stringify(cert.description),
-                imageUrl: cert.imageUrl,
-                issuedBy: cert.issuedBy,
-                issuedDate: cert.issuedDate,
-                isVisible: true
-            }
-        })
-    }
-
-    console.log('✅ Sample certificates created')
 }
 
 main()

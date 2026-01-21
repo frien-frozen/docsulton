@@ -35,15 +35,15 @@ export default function Navbar() {
     // Check for special pages that need "Back" button only
     // Note: pathname might include locale prefix depending on configuration, 
     // but typically usePathname from navigation handles it. 
-    // We check if it ENDS with /booking or contains /blog/ (but is not just /blog)
-    const isBookingPage = pathname === '/booking' || pathname.endsWith('/booking')
+    // We check if it ENDS with /consultation or contains /blog/ (but is not just /blog)
+    const isBookingPage = pathname === '/consultation' || pathname.endsWith('/consultation')
     const isBlogPostPage = pathname.includes('/blog/') && pathname.split('/').filter(Boolean).length > 2 // simplistic check for /blog/[slug] (e.g. /uz/blog/slug)
 
     // Simplified logic: strict check
-    const isMinimalNav = pathname.includes('/booking') || (pathname.includes('/blog/') && pathname.split('/').length > (locale ? 3 : 2))
+    const isMinimalNav = pathname.includes('/consultation') || (pathname.includes('/blog/') && pathname.split('/').length > (locale ? 3 : 2))
 
     // Better check using regex or string manipulation
-    const showBackButton = pathname.includes('/booking') || (pathname.includes('/blog/') && pathname !== '/blog' && !pathname.endsWith('/blog'))
+    const showBackButton = pathname.includes('/consultation') || (pathname.includes('/blog/') && pathname !== '/blog' && !pathname.endsWith('/blog'))
 
     if (showBackButton) {
         return (
@@ -85,21 +85,6 @@ export default function Navbar() {
                                 {link.label}
                             </Link>
                         ))}
-
-                        <div className="flex items-center gap-2 pl-4 border-l border-gray-300">
-                            {['uz', 'ru', 'en'].map((lang) => (
-                                <a
-                                    key={lang}
-                                    href={`/${lang}${pathname}`}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${locale === lang
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'hover:bg-blue-50 text-gray-600'
-                                        }`}
-                                >
-                                    {lang.toUpperCase()}
-                                </a>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -131,21 +116,6 @@ export default function Navbar() {
                                 >
                                     {link.label}
                                 </Link>
-                            ))}
-                        </div>
-
-                        <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl w-full justify-center">
-                            {['uz', 'ru', 'en'].map((lang) => (
-                                <a
-                                    key={lang}
-                                    href={`/${lang}${pathname}`}
-                                    className={`px-4 py-2 rounded-xl text-lg font-medium transition ${locale === lang
-                                        ? 'bg-white text-blue-600 shadow-md'
-                                        : 'text-gray-500'
-                                        }`}
-                                >
-                                    {lang.toUpperCase()}
-                                </a>
                             ))}
                         </div>
                     </motion.div>

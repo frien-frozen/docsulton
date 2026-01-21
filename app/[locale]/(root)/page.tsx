@@ -71,10 +71,14 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <Link href="/booking" className="btn btn-primary group">
+                <Link href="/consultation" className="btn btn-primary group">
                   <Calendar className="w-5 h-5" />
                   {t('Hero.bookConsultation')}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link href="/dashboard" className="btn btn-secondary group">
+                  <Users className="w-5 h-5" />
+                  Mening konsultatsiyalarim
                 </Link>
                 <Link href="/about" className="btn btn-outline">
                   {t('Hero.learnMore')}
@@ -261,7 +265,7 @@ export default function HomePage() {
               <p className="text-base text-gray-600 mb-8 max-w-2xl mx-auto">
                 {t('Hero.CTA.desc')}
               </p>
-              <Link href="/booking" className="btn btn-primary btn-lg inline-flex">
+              <Link href="/consultation" className="btn btn-primary btn-lg inline-flex">
                 <Calendar className="w-6 h-6" />
                 {t('Hero.CTA.button')}
                 <ArrowRight className="w-6 h-6" />
