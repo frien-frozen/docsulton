@@ -201,7 +201,7 @@
     "About": {
         "title": "Zamonaviy urologiya va <span>erkaklar salomatligi</span>",
         "role": "Dr. Sultonbek Norkuziev",
-        "bio": "Men Sultonbek Norkuziev, oliy toifali urolog-androlog shifokorman. Faoliyatim davomida minglab bemorlarga salomatligini tiklashda yordam berib kelmoqdaman. Mening maqsadim - zamonaviy tibbiyot yutuqlarini amaliyotda qo'llash orqali insonlar hayot sifatini yaxshilash.",
+        "bio": "Men Sultonbek Norkuziev, oliy toifali urolog-androlog shifokorman. Ukraina davlat tiбbiyot akademiyasi va Samarqand davlat tibbiyot universitetida tahsil olganman. Ukraina davlat klinikalarida amaliy malaka oshirganman.",
         "bookAppointment": "Qabulga yozilish",
         "readMore": "Batafsil",
         "social": "Ijtimoiy tarmoqlarda kuzating",
@@ -212,21 +212,21 @@
             "consultations": "Konsultatsiyalar"
         },
         "sections": {
-            "education": "Ta'lim va Malaka",
+            "education": "Ta'lim ва Malaka",
             "directions": "Asosiy Yo'nalishlar"
         },
         "educationList": {
-            "0": "Toshkent Tibbiyot Akademiyasi (Bakalavr)",
-            "1": "Respublika Ixtisoslashtirilgan Urologiya Markazi (Ordinatura)",
-            "2": "Yevropa Urologlar Assotsiatsiyasi a'zosi",
-            "3": "Rossiya va Turkiya klinikalarida malaka oshirish"
+            "0": "Ukraina davlat tibbiyot akademiyasi",
+            "1": "Samarqand davlat tibbiyot universitetida ordinatura",
+            "2": "Ukraina davlat klinikalarida amaliy malaka oshirish",
+            "3": "Yevropa Urologlar Assotsiatsiyasi a'zosi"
         },
         "directionsList": {
-            "0": "Erkaklar bepushtligini davolash",
-            "1": "Prostata bezi kasalliklari",
-            "2": "Jinsiy zaiflik va erektil disfunksiya",
-            "3": "Buyrak tosh kasalliklari (Endourologiya)",
-            "4": "Laparoskopik operatsiyalar"
+            "0": "Sportdagi androgen-anabolik steroidlar bo'yicha maslahat (Sportiv endokrinolog)",
+            "1": "Erkaklar bepushtligi sabablarini aniqlash va davolash",
+            "2": "O'smirlardagi gormonal kamchiliklarni davolash",
+            "3": "Jinsiy zaiflik va erektil disfunksiyani davolash",
+            "4": "Buyrak va siydik yo'llari toshlarini davolash (Endourologiya)"
         }
     }
 }

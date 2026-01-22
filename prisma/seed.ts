@@ -23,38 +23,56 @@ async function main() {
     console.log('✅ Admin user created:', admin.username)
 
     // Create services
-    const consultation30 = await prisma.service.create({
+    const offlineConsultation = await prisma.service.create({
         data: {
             name: JSON.stringify({
-                uz: 'Online Konsultatsiya (30 daqiqa)',
-                ru: 'Онлайн Консультация (30 минут)',
-                en: 'Online Consultation (30 mins)'
+                uz: 'Offline Konsultatsiya',
+                ru: 'Оффлайн Консультация',
+                en: 'Offline Consultation'
             }),
             description: JSON.stringify({
-                uz: 'Urolog bilan video aloqa orqali maslahat',
-                ru: 'Видеоконсультация с урологом',
-                en: 'Video consultation with urologist'
+                uz: '40 daqiqalik yuzma-yuz qabul. Analizlar, tashxis va davolash rejasi.',
+                ru: '40-минутный личный прием. Анализы, диагноз и план лечения.',
+                en: '40-minute in-person appointment. Analysis, diagnosis and treatment plan.'
             }),
-            duration: 30,
-            price: 150000,
+            duration: 40,
+            price: 420000,
             currency: 'UZS'
         }
     })
 
-    const consultation60 = await prisma.service.create({
+    const onlineConsultation = await prisma.service.create({
         data: {
             name: JSON.stringify({
-                uz: 'Online Konsultatsiya (1 soat)',
-                ru: 'Онлайн Консультация (1 час)',
-                en: 'Online Consultation (1 hour)'
+                uz: 'Online Konsultatsiya',
+                ru: 'Онлайн Консультация',
+                en: 'Online Consultation'
             }),
             description: JSON.stringify({
-                uz: 'Batafsil ko\'rik va maslahat',
-                ru: 'Подробный осмотр и консультация',
-                en: 'Detailed examination and consultation'
+                uz: '30 daqiqalik video aloqa. Shikoyatlar, maqsad va savollar.',
+                ru: '30-минутная видеосвязь. Жалобы, цели и вопросы.',
+                en: '30-minute video call. Complaints, goals and questions.'
             }),
-            duration: 60,
+            duration: 30,
             price: 250000,
+            currency: 'UZS'
+        }
+    })
+
+    const courseControl = await prisma.service.create({
+        data: {
+            name: JSON.stringify({
+                uz: '3 Oylik Nazorat (Kurs)',
+                ru: '3-месячный Контроль (Курс)',
+                en: '3-Month Control (Course)'
+            }),
+            description: JSON.stringify({
+                uz: '12 ta online konsultatsiya + Telegram orqali doimiy aloqa. Chegirma bilan: $250 (aslida $350).',
+                ru: '12 онлайн-консультаций + постоянная связь через Telegram. Со скидкой: $250 (обычно $350).',
+                en: '12 online consultations + constant contact via Telegram. Discounted: $250 (regular $350).'
+            }),
+            duration: 30, // Per session placeholder
+            price: 3200000, // Approx $250
             currency: 'UZS'
         }
     })
