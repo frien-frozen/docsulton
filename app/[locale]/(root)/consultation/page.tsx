@@ -106,7 +106,7 @@ export default function BookingPage() {
             await signInWithPopup(auth, googleProvider)
         } catch (error) {
             console.error(error)
-            alert('Kirishda xatolik. Qaytadan urinib ko\'ring.')
+            alert(`Kirishda xatolik: ${(error as any).message}`)
         }
     }
 

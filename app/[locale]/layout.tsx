@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
   title: 'Dr. Sultonbek Norkuziev',
   description: 'Urolog | Androlog | Endourolog',
+  icons: {
+    icon: '/images/dr-avatar.png'
+  }
 }
 
 export default async function LocaleLayout({
