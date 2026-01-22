@@ -22,6 +22,10 @@ async function main() {
 
     console.log('✅ Admin user created:', admin.username)
 
+    // Delete existing services to avoid duplicates
+    await prisma.service.deleteMany({})
+    console.log('🗑️  Old services deleted')
+
     // Create services
     const offlineConsultation = await prisma.service.create({
         data: {
