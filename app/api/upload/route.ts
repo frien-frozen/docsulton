@@ -15,7 +15,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
                 // Allowed file types
                 return {
-                    allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif'],
+                    allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
                     tokenPayload: JSON.stringify({
                         // optional payload
                     }),
